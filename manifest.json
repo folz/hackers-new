@@ -3,7 +3,7 @@
   "name": "Hackers New",
   "version": "1.0",
 
-  "description": "Show items from HN's /newest page on the front page.",
+  "description": "Show items from HN's /newest page on the Hacker News front page.",
   "icons": {
     "48": "icons/icon-48.png"
   },
