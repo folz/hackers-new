@@ -19,7 +19,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://news.ycombinator.com/*"],
+      "matches": ["*://news.ycombinator.com/", "*://news.ycombinator.com/news*"],
       "js": ["display-new.js"]
     }
   ]
