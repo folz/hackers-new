@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "Hackers New",
+  "version": "1.0",
+
+  "description": "Show items from HN's /newest page on the front page.",
+  "icons": {
+    "48": "icons/icon-48.png"
+  },
+
+  "permissions": [
+    "*://news.ycombinator.com/*",
+    "*://hacker-news.firebaseio.com/*",
+    "storage"
+  ],
+  "background": {
+    "scripts": ["refresh-new.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://news.ycombinator.com/*"],
+      "js": ["display-new.js"]
+    }
+  ]
+}
