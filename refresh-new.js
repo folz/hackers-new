@@ -33,37 +33,39 @@ function shuffle(array) {
  * TODO: Make the run-every-#-minutes a user preference.
  */
 function fetchAndStoreNew() {
-  fetch("https://hacker-news.firebaseio.com/v0/newstories.json")
-    .then((response) => {
-      response.json()
-        .then((json) => {
-          // Story IDs come sorted newest-to-oldest and don't contain flagged
-          // or dead submissions.
-          // TODO: Make the # of new stories to consider a user preference.
-          const storyIds = json.slice(0, NEW_STORIES_FETCH_COUNT);
-          browser.storage.local.set({
-            'newstories': storyIds
-          });
+  return new Promise((resolve, reject) => {
+    fetch("https://hacker-news.firebaseio.com/v0/newstories.json")
+      .then((response) => {
+        response.json()
+          .then((json) => {
+            // Story IDs come sorted newest-to-oldest and don't contain flagged
+            // or dead submissions.
+            // TODO: Make the # of new stories to consider a user preference.
+            const storyIds = json.slice(0, NEW_STORIES_FETCH_COUNT);
+            browser.storage.local.set({
+              'newstories': storyIds
+            });
 
-          // Fetch the item json for all story IDs, in parallel.
-          Promise.all(storyIds.map((id) => {
-            return fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-                     .then((response) => {
-                       return response.json();
-                     });
-          })).then((jsons) => {
-            // Once we have all the items, turn them into one big
-            // storage object and store it.
-            const storyItems = jsons.reduce((acc, story) => {
-              acc[story.id] = story;
-              return acc;
-            }, {});
-            browser.storage.local.set(storyItems);
+            // Fetch the item json for all story IDs, in parallel.
+            Promise.all(storyIds.map((id) => {
+              return fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+                       .then((response) => {
+                         return response.json();
+                       });
+            })).then((jsons) => {
+              // Once we have all the items, turn them into one big
+              // storage object and store it.
+              const storyItems = jsons.reduce((acc, story) => {
+                acc[story.id] = story;
+                return acc;
+              }, {});
 
-            updateDisplayedStories();
+              browser.storage.local.set(storyItems);
+              resolve();
+            });
           });
-        });
-    });
+      });
+  });
 }
 
 function updateDisplayedStories() {
@@ -77,32 +79,22 @@ function updateDisplayedStories() {
       store = store[0];
     }
 
-    // Because fetchAndStoreNew can call updateDisplayedStories, this
-    // check ensures we don't have two updates in quick succession.
-    // 60000 is the minutes-to-milliseconds constant.
-    const lastUpdate = new Date(store.lastUpdate || 0);
-    const delta = Date.now() - lastUpdate.getTime();
-    if (delta < NEW_STORIES_UPDATE_INTERVAL * 60000) {
-      return;
-    }
-
     // browser.storage requires that keys are already strings. It doesn't
     // implicitly convert integers.
     let storyIdsToDisplay = shuffle(store.newstories).map(String);
     browser.storage.local.set({
       'storyIdsToDisplay': storyIdsToDisplay,
-      'lastUpdate': Date.now()
     });
   });
 }
 
 browser.alarms.create("fetchAndStoreNew", {
-  'when': Date.now(),
+  'delayInMinutes': NEW_STORIES_FETCH_INTERVAL,
   'periodInMinutes': NEW_STORIES_FETCH_INTERVAL
 });
 
 browser.alarms.create("updateDisplayedStories", {
-  'when': Date.now(),
+  'delayInMinutes': NEW_STORIES_UPDATE_INTERVAL,
   'periodInMinutes': NEW_STORIES_UPDATE_INTERVAL
 })
 
@@ -116,3 +108,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       break;
   }
 });
+
+// Initialize
+fetchAndStoreNew()
+  .then(updateDisplayedStories);
