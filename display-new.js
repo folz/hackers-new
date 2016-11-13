@@ -98,8 +98,9 @@ browser.storage.local.get('storyIdsToDisplay', (store) => {
       let itemDom = createItemDom(store[storyId]);
 
       // Each story takes up three DOM elements, and we want to insert
-      // a new story every 5 existing stories starting at the 5th story.
-      let appendAt = ITEM_CONTAINER.children[index * 3*5 + 3*5]
+      // a new story each 6th existing story, starting at the 5th story.
+      // Aka, after story 5, 10, 15, ....
+      let appendAt = ITEM_CONTAINER.children[index * 3*6 + 3*5]
 
       ITEM_CONTAINER.insertBefore(itemDom[0], appendAt); // Story title/url
       ITEM_CONTAINER.insertBefore(itemDom[1], appendAt); // Points/poster
