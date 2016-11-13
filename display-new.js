@@ -97,9 +97,13 @@ browser.storage.local.get('storyIdsToDisplay', (store) => {
     storyIdsToDisplay.forEach((storyId, index) => {
       let itemDom = createItemDom(store[storyId]);
 
-      ITEM_CONTAINER.appendChild(itemDom[0]); // Story title/url
-      ITEM_CONTAINER.appendChild(itemDom[1]); // Points/poster
-      ITEM_CONTAINER.appendChild(itemDom[2]); // "Spacer" elem
+      // Each story takes up three DOM elements, and we want to insert
+      // a new story every 5 existing stories starting at the 5th story.
+      let appendAt = ITEM_CONTAINER.children[index * 3*5 + 3*5]
+
+      ITEM_CONTAINER.insertBefore(itemDom[0], appendAt); // Story title/url
+      ITEM_CONTAINER.insertBefore(itemDom[1], appendAt); // Points/poster
+      ITEM_CONTAINER.insertBefore(itemDom[2], appendAt); // "Spacer" elem
     });
   });
 });

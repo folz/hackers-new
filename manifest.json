@@ -19,8 +19,9 @@
   },
   "content_scripts": [
     {
+      "js": ["display-new.js"],
       "matches": ["*://news.ycombinator.com/", "*://news.ycombinator.com/news*"],
-      "js": ["display-new.js"]
+      "run_at": "document_end"
     }
   ]
 }
