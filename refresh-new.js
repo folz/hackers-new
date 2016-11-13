@@ -2,9 +2,6 @@ if (typeof browser === 'undefined') {
   var browser = chrome;
 }
 
-/* The number of new stories to display on the front page. */
-const NEW_STORIES_DISPLAY_COUNT = 5;
-
 /* The number of stories on /newest to fetch each update. */
 const NEW_STORIES_FETCH_COUNT = 30;
 
@@ -81,7 +78,7 @@ function updateDisplayedStories() {
     }
 
     // Because fetchAndStoreNew can call updateDisplayedStories, this
-    // check ensures we don't have two refreshes in quick succession.
+    // check ensures we don't have two updates in quick succession.
     // 60000 is the minutes-to-milliseconds constant.
     const lastUpdate = new Date(store.lastUpdate || 0);
     const delta = Date.now() - lastUpdate.getTime();
@@ -91,15 +88,12 @@ function updateDisplayedStories() {
 
     // browser.storage requires that keys are already strings. It doesn't
     // implicitly convert integers.
-    let storyIdsToDisplay = shuffle(store.newstories)
-                              .slice(0, NEW_STORIES_DISPLAY_COUNT)
-                              .map(String);
+    let storyIdsToDisplay = shuffle(store.newstories).map(String);
     browser.storage.local.set({
       'storyIdsToDisplay': storyIdsToDisplay,
       'lastUpdate': Date.now()
     });
   });
-
 }
 
 browser.alarms.create("fetchAndStoreNew", {

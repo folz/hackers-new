@@ -2,9 +2,16 @@ if (typeof browser === 'undefined') {
   var browser = chrome;
 }
 
-/* The table element containing stories on the front page */
-const FRONT_PAGE_ITEMS = document.querySelectorAll('#hnmain table.itemlist')[0];
+/* The IDs of items already on the front page. */
+const EXISTING_ITEM_IDS = Array.prototype.map.call(document.querySelectorAll('.athing'), e => e.id)
 
+/* The table element containing stories on the front page. */
+const ITEM_CONTAINER = document.querySelectorAll('#hnmain table.itemlist tbody')[0];
+
+/* The number of new stories to display on the front page. */
+const NEW_STORIES_DISPLAY_COUNT = 5;
+
+/* Regular expression to match strings that begin with "www." */
 const RE_WWW_AT_START = /^(www\.)/;
 
 
@@ -24,7 +31,7 @@ function site(url) {
 
 
 /**
- * Builds the item DOM elements to be inserted on the front page.
+ * Builds the DOM elements for items being inserted on the front page.
  */
 function createItemDom(item) {
   let htmlString =
@@ -80,15 +87,19 @@ browser.storage.local.get('storyIdsToDisplay', (store) => {
 
   // If there aren't any stories to display, default to an empty array
   // so the .forEach doesn't error.
-  storyIdsToDisplay = store.storyIdsToDisplay || [];
+  let storyIdsToDisplay = (store.storyIdsToDisplay || [])
+    // Exclude any new stories already on the homepage
+    .filter(e => EXISTING_ITEM_IDS.indexOf(e) === -1)
+    // Limit the number of stories shown.
+    .slice(0, NEW_STORIES_DISPLAY_COUNT);
 
   browser.storage.local.get(storyIdsToDisplay, (store) => {
-    storyIdsToDisplay.forEach((id) => {
-      let itemDom = createItemDom(store[id]);
+    storyIdsToDisplay.forEach((storyId, index) => {
+      let itemDom = createItemDom(store[storyId]);
 
-      FRONT_PAGE_ITEMS.appendChild(itemDom[0]);
-      FRONT_PAGE_ITEMS.appendChild(itemDom[1]);
-      FRONT_PAGE_ITEMS.appendChild(itemDom[2]);
+      ITEM_CONTAINER.appendChild(itemDom[0]); // Story title/url
+      ITEM_CONTAINER.appendChild(itemDom[1]); // Points/poster
+      ITEM_CONTAINER.appendChild(itemDom[2]); // "Spacer" elem
     });
   });
 });
