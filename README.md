@@ -1,5 +1,7 @@
 # Hackers New
 
+Please don't submit this to HN yet. I'm waiting on the Firefox addon to be approved, and then I'll submit this as a Show HN. Thanks!
+
 ![Screenshot of Hackers New](https://addons.cdn.mozilla.net/user-media/previews/full/180/180247.png)
 
 A simple browser extension for Firefox and Chrome that adds items from HN's /newest page to the front page.
