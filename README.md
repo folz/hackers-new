@@ -26,16 +26,10 @@ Donations: 1KZ23Sm35C7Xjk9kV2VxCM7xscnsU9Huha
 
 ## Explanation of permissions
 
-**Host permissions**: hacker-news.firebaseio.com and news.ycombinator.com
+**Host permissions**: hacker-news.firebaseio.com and news.ycombinator.com. The first host is required to access the HN api and fetch new stories. The second host is required to display new stories on the front page.
 
-The first host is required to access the HN api and fetch new stories. The second host is required to display new stories on the front page.
+**alarms**: Required to trigger the periodic fetching of new stories.
 
-**alarms**:
-
-Required to trigger the periodic fetching of new stories.
-
-**storage**:
-
-Required to persist data for new stories after we fetch them, so that displaying them on the front page is snappy.
+**storage**: Required to persist data for new stories after we fetch them, so that displaying them on the front page is snappy.
 
 I take privacy seriously and your data is never shared with anyone. The extension is open-source at https://github.com/folz/hackers-new so that you can verify this claim.
