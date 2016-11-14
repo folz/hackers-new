@@ -149,18 +149,19 @@ browser.storage.local.get('storyIdsToDisplay', (store) => {
         // Unlike the vanilla HN dom, HNES only uses one DOM element
         // per story.
         appendAt = ITEM_CONTAINER.children[index * 6 + 5]
+
+        ITEM_CONTAINER.insertBefore(itemDom[0], appendAt); // Entire story
       } else {
         itemDom = createItemDom(store[storyId]);
         // Each story takes up three DOM elements, and we want to insert
         // a new story each 6th existing story, starting at the 5th story.
         // Aka, after story 5, 10, 15, ....
         appendAt = ITEM_CONTAINER.children[index * 3*6 + 3*5]
+
+        ITEM_CONTAINER.insertBefore(itemDom[0], appendAt); // Story title/url
+        ITEM_CONTAINER.insertBefore(itemDom[1], appendAt); // Points/poster
+        ITEM_CONTAINER.insertBefore(itemDom[2], appendAt); // "Spacer" elem
       }
-
-
-      ITEM_CONTAINER.insertBefore(itemDom[0], appendAt); // Story title/url
-      ITEM_CONTAINER.insertBefore(itemDom[1], appendAt); // Points/poster
-      ITEM_CONTAINER.insertBefore(itemDom[2], appendAt); // "Spacer" elem
     });
   });
 });
