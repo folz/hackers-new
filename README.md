@@ -4,7 +4,7 @@
 
 A simple browser extension for Firefox and Chrome that adds items from HN's /newest page to the front page.
 
-These stories are chosen at random from /newest and get re-chosen every five minutes. You can upvote them from the front page just like you would from /newest.
+These stories are chosen at random from /newest and get re-chosen every fifteen minutes. You can upvote them from the front page just like you would from /newest.
 
 *(The highlight in the screenshot is edited to draw attention to the new story; this extension doesn't change how HN is styled.)*
 

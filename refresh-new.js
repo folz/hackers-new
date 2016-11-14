@@ -6,10 +6,10 @@ if (typeof browser === 'undefined') {
 const NEW_STORIES_FETCH_COUNT = 30;
 
 /* How often, in minutes, new stories are fetched. */
-const NEW_STORIES_FETCH_INTERVAL = 15.0;
+const NEW_STORIES_FETCH_INTERVAL = 5.0;
 
 /* How often, in minutes, displayed new stories are changed */
-const NEW_STORIES_UPDATE_INTERVAL = 5.0;
+const NEW_STORIES_UPDATE_INTERVAL = 15.0;
 
 
 /**
