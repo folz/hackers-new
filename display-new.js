@@ -5,6 +5,9 @@ if (typeof browser === 'undefined') {
 /* The IDs of items already on the front page. */
 const EXISTING_ITEM_IDS = Array.prototype.map.call(document.querySelectorAll('.athing'), e => e.id)
 
+/* Detect if Hacker News Enhancement Suite is installed. */
+const FLAG_HNES_INSTALLED = document.querySelectorAll("tr#content").length === 1;
+
 /* The table element containing stories on the front page. */
 const ITEM_CONTAINER = document.querySelectorAll('#hnmain table.itemlist tbody')[0];
 
@@ -13,7 +16,6 @@ const NEW_STORIES_DISPLAY_COUNT = 5;
 
 /* Regular expression to match strings that begin with "www." */
 const RE_WWW_AT_START = /^(www\.)/;
-
 
 /**
  * Returns the "site" of a string URL.
@@ -75,6 +77,50 @@ function createItemDom(item) {
   return template.content.childNodes;
 }
 
+
+/**
+ * Builds the DOM elements for items being inserted on the front page.
+ */
+function createHnesDom(item) {
+  let htmlString =
+    `<tr class="athing" id="${item.id}">
+       <td>
+         <a href="item?id=${item.id}" class="comments" title="Comments">${item.descendants}</a>
+       </td>
+       <td>
+         <span class="score no-heat" id="score_${item.id}" title="Points"></span>
+       </td>
+       <td valign="top" class="votelinks">
+         <center>
+           <a id="up_${item.id}" href="vote?id=${item.id}&how=up&goto=news">
+             <div class="votearrow" title="upvote"></div>
+           </a>
+         </center>
+       </td>
+       <td class="title">
+         ${item.url
+           ?
+           `<a href="${item.url}" class="storylink">${item.title}</a>
+            <span class="sitebit comhead">
+              <span class="paren">(</span>
+              <span>${site(item.url)}</span>
+              <span class="paren">)</span>
+            </span>`
+           :
+           `<a href="item?id=${item.id}" class="storylink">${item.title}</a>`
+          }
+          <span class="submitter">
+            by <a href="user?id=${item.by}" class="hnuser" title="View profile">${item.by}</a>
+          </span>
+          <span class="hnes-age">on /newest</span>
+       </td>
+     </tr>`;
+
+  let template = document.createElement('template');
+  template.innerHTML = htmlString;
+  return template.content.childNodes;
+}
+
 // We use the (key, callback) signature here instead of the promise
 // signature because Firefox supports both but Chrome only supports
 // the former.
@@ -95,12 +141,22 @@ browser.storage.local.get('storyIdsToDisplay', (store) => {
 
   browser.storage.local.get(storyIdsToDisplay, (store) => {
     storyIdsToDisplay.forEach((storyId, index) => {
-      let itemDom = createItemDom(store[storyId]);
+      let itemDom, appendAt;
+      // Hacker News Enhancement Suite rewrites the page DOM on load,
+      // and this extension appends items after the rewrite happens.
+      if (FLAG_HNES_INSTALLED) {
+        itemDom = createHnesDom(store[storyId]);
+        // Unlike the vanilla HN dom, HNES only uses one DOM element
+        // per story.
+        appendAt = ITEM_CONTAINER.children[index * 6 + 5]
+      } else {
+        itemDom = createItemDom(store[storyId]);
+        // Each story takes up three DOM elements, and we want to insert
+        // a new story each 6th existing story, starting at the 5th story.
+        // Aka, after story 5, 10, 15, ....
+        appendAt = ITEM_CONTAINER.children[index * 3*6 + 3*5]
+      }
 
-      // Each story takes up three DOM elements, and we want to insert
-      // a new story each 6th existing story, starting at the 5th story.
-      // Aka, after story 5, 10, 15, ....
-      let appendAt = ITEM_CONTAINER.children[index * 3*6 + 3*5]
 
       ITEM_CONTAINER.insertBefore(itemDom[0], appendAt); // Story title/url
       ITEM_CONTAINER.insertBefore(itemDom[1], appendAt); // Points/poster
