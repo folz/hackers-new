@@ -14,3 +14,8 @@ Get the extension: https://addons.mozilla.org/en-US/firefox/addon/hackers-new/
 
 Get the extension: https://chrome.google.com/webstore/detail/khpjpigbdlgncbapkpbcfnhllafjgkgf
 
+## Contributing
+
+Contributions are very welcome. Please make sure your pull request(s) support both Firefox and Chrome!
+
+Donations: 1KZ23Sm35C7Xjk9kV2VxCM7xscnsU9Huha
