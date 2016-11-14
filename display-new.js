@@ -33,17 +33,25 @@ function site(url) {
 
 
 /**
+ * Mozilla's htmlspecialchars but for Javascript.
+ * @see https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions/XUL_School/DOM_Building_and_HTML_Insertion#innerHTML_with_HTML_Escaping
+ */
+ function escapeHTML(str) {
+   return String(str).replace(/[&"'<>]/g, (m) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[m]);
+ }
+
+/**
  * Builds the DOM elements for items being inserted on the front page.
  */
 function createItemDom(item) {
   let htmlString =
-    `<tr class="athing" id="${item.id}">
+    `<tr class="athing" id="${escapeHTML(item.id)}">
        <td align="right" valign="top" class="title">
          <span class=rank">...</span>
        </td>
        <td valign="top" class="votelinks">
          <center>
-           <a id="up_${item.id}" href="vote?id=${item.id}&how=up&goto=news">
+           <a id="up_${escapeHTML(item.id)}" href="vote?id=${escapeHTML(item.id)}&how=up&goto=news">
              <div class="votearrow" title="upvote"></div>
            </a>
          </center>
@@ -51,23 +59,23 @@ function createItemDom(item) {
        <td class="title">
          ${item.url
            ?
-           `<a href="${item.url}" class="storylink">${item.title}</a>
+           `<a href="${escapeHTML(item.url)}" class="storylink">${escapeHTML(item.title)}</a>
             <span class="sitebit comhead">
-              (<a href="from?site=${site(item.url)}"><span class="sitestr">${site(item.url)}</span></a>)
+              (<a href="from?site=${escapeHTML(site(item.url))}"><span class="sitestr">${escapeHTML(site(item.url))}</span></a>)
             </span>`
            :
-           `<a href="item?id=${item.id}" class="storylink">${item.title}</a>`
+           `<a href="item?id=${escapeHTML(item.id)}" class="storylink">${escapeHTML(item.title)}</a>`
           }
        </td>
      </tr>
      <tr>
       <td colspan="2"></td>
       <td class="subtext">
-        <span class="score" id="score_${item.id}">${item.score} point${(item.score === 1) ? "" : "s"}</span> by <a href="user?id=${item.by}" class="hnuser">${item.by}</a>
+        <span class="score" id="score_${escapeHTML(item.id)}">${escapeHTML(item.score)} point${(item.score === 1) ? "" : "s"}</span> by <a href="user?id=${escapeHTML(item.by)}" class="hnuser">${escapeHTML(item.by)}</a>
         <span class="age">
-          <a href="item?id=${item.id}">on /newest</a>
+          <a href="item?id=${escapeHTML(item.id)}">on /newest</a>
         </span>
-        <span id="unv_${item.id}"></span> | <a href="hide?id=${item.id}&goto=news">hide</a> | <a href="item?id=${item.id}">${item.descendants} comment${(item.descendants == 1) ? "" : "s"}</a>
+        <span id="unv_${escapeHTML(item.id)}"></span> | <a href="hide?id=${escapeHTML(item.id)}&goto=news">hide</a> | <a href="item?id=${escapeHTML(item.id)}">${escapeHTML(item.descendants)} comment${(item.descendants == 1) ? "" : "s"}</a>
       </td>
      </tr>
      <tr class="spacer" style="height:5px"></tr>`;
@@ -83,16 +91,16 @@ function createItemDom(item) {
  */
 function createHnesDom(item) {
   let htmlString =
-    `<tr class="athing" id="${item.id}">
+    `<tr class="athing" id="${escapeHTML(item.id)}">
        <td>
-         <a href="item?id=${item.id}" class="comments" title="Comments">${item.descendants}</a>
+         <a href="item?id=${escapeHTML(item.id)}" class="comments" title="Comments">${escapeHTML(item.descendants)}</a>
        </td>
        <td>
-         <span class="score no-heat" id="score_${item.id}" title="Points"></span>
+         <span class="score no-heat" id="score_${escapeHTML(item.id)}" title="Points"></span>
        </td>
        <td valign="top" class="votelinks">
          <center>
-           <a id="up_${item.id}" href="vote?id=${item.id}&how=up&goto=news">
+           <a id="up_${escapeHTML(item.id)}" href="vote?id=${escapeHTML(item.id)}&how=up&goto=news">
              <div class="votearrow" title="upvote"></div>
            </a>
          </center>
@@ -100,17 +108,17 @@ function createHnesDom(item) {
        <td class="title">
          ${item.url
            ?
-           `<a href="${item.url}" class="storylink">${item.title}</a>
+           `<a href="${escapeHTML(item.url)}" class="storylink">${escapeHTML(item.title)}</a>
             <span class="sitebit comhead">
               <span class="paren">(</span>
-              <span>${site(item.url)}</span>
+              <span>${escapeHTML(site(item.url))}</span>
               <span class="paren">)</span>
             </span>`
            :
-           `<a href="item?id=${item.id}" class="storylink">${item.title}</a>`
+           `<a href="item?id=${escapeHTML(item.id)}" class="storylink">${escapeHTML(item.title)}</a>`
           }
           <span class="submitter">
-            by <a href="user?id=${item.by}" class="hnuser" title="View profile">${item.by}</a>
+            by <a href="user?id=${escapeHTML(item.by)}" class="hnuser" title="View profile">${escapeHTML(item.by)}</a>
           </span>
           <span class="hnes-age">on /newest</span>
        </td>
