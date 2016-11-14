@@ -37,3 +37,5 @@ Required to trigger the periodic fetching of new stories.
 **storage**:
 
 Required to persist data for new stories after we fetch them, so that displaying them on the front page is snappy.
+
+I take privacy seriously and your data is never shared with anyone. The extension is open-source at https://github.com/folz/hackers-new so that you can verify this claim.
